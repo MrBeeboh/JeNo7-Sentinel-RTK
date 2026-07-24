@@ -1,0 +1,29 @@
+JeNo 7 — split from JeNo7_ALL_VERSIONS_1.1.1.dxf
+Layers: CUT / POCKET / CHAMFER / COUNTERSINK
+Units: mm (as original)
+
+#   filename                                   W       H       ents 
+----------------------------------------------------------------------
+  1 Bottom_plate_variant_01.dxf                   96.9   217.1   239
+  2 Bottom_plate_variant_02.dxf                   96.9   217.1   239
+  3 Top_plate_variant_03.dxf                      74.0   195.4    69
+  4 Top_plate_variant_04.dxf                      74.0   195.4    69
+  5 Top_plate_variant_05.dxf                      74.0   195.4    69
+  6 Middle_plate_variant_06.dxf                   96.9    79.0    22
+  7 Middle_plate_variant_07.dxf                   96.9    79.0    22
+  8 Arm_or_reinforcement_08.dxf                   23.5   193.7    37
+  9 Camera_plate_variant_09.dxf                   69.6    58.4   146
+ 10 Camera_plate_variant_10.dxf                   69.6    58.4   146
+ 11 Camera_plate_variant_11.dxf                   69.6    58.4   138
+ 12 Camera_plate_variant_12.dxf                   69.6    58.4   138
+ 13 Arm_or_reinforcement_13.dxf                   23.5   171.2    39
+ 14 Arm_or_reinforcement_14.dxf                   23.5   171.2    37
+ 15 Camera_plate_variant_15.dxf                   69.5    57.5   122
+ 16 Camera_plate_variant_16.dxf                   69.5    57.5   122
+ 17 Arm_or_reinforcement_17.dxf                   17.1   141.8     8
+ 18 Plate_18_52x43mm.dxf                          51.7    43.0    75
+ 19 Plate_19_52x43mm.dxf                          51.7    43.0    75
+ 20 Plate_20_46x42mm.dxf                          45.7    41.6    78
+ 21 Plate_21_46x42mm.dxf                          45.7    41.6    78
+ 22 Plate_22_20x16mm.dxf                          20.0    16.4    24
+ 23 Plate_23_20x16mm.dxf                          20.0    16.4    24

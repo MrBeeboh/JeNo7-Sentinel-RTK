@@ -1,0 +1,13 @@
+# Duplicate archive of extracted tree
+JeNo-7-main.zip
+
+# Heavy mesh→STEP conversions (use official STLs in JeNo-7-main/02-TPU instead)
+Editable/03-TPU-3D/from-STL-mesh/
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+*~
+*.swp
+.vscode/
+.idea/

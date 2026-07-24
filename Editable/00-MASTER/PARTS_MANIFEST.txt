@@ -1,0 +1,17 @@
+JeNo 7 editable parts (generated from official STEP export)
+Source: JeNo7_ALL_VERSIONS_1.1.1.step
+
+Part                                     Cat        DXF
+------------------------------------------------------------
+Arm_8mm                                  carbon     no
+Arm_key                                  carbon     no
+Bottom_plate_3mm                         carbon     no
+Camera_plate_25deg_O4                    carbon     no
+Middle_plate_2p5mm                       carbon     no
+Standoff_M3x20                           hardware   no
+Standoff_M3x30                           hardware   no
+TPU_Antenna_O3                           tpu        no
+TPU_Antenna_support                      tpu        no
+TPU_Capacitor_support_35Vx2              tpu        no
+TPU_Rear_bumper                          tpu        no
+Top_plate_2p5mm                          carbon     no
