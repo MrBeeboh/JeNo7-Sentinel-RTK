@@ -1,0 +1,17 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Temp / renders (regenerate from .scad)
+*.png
+*.jpg
+*.jpeg
+
+# FreeCAD temp
+*.FCStd~
+
+# No idea why this exists
+{}
