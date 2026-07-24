@@ -9,8 +9,13 @@
 //   export_2d = true      → export DXF for carbon cutting
 //
 // Example:
-//   openscad -o GNSS_Roof_Plate.stl GNSS_Roof_Plate.scad
+//   openscad -o GNSS_Roof_Plate.stl --export-format asciistl GNSS_Roof_Plate.scad
 //   openscad -o GNSS_Roof_Plate.dxf -D 'export_2d=true' GNSS_Roof_Plate.scad
+//
+// NOTE: OpenSCAD 2021 binary STL writer is buggy on this system.
+// Always use --export-format asciistl for STL output.
+// The FreeCAD-generated files (GNSS_Roof_Plate_fc.*) are the
+// production reference — use GNSS_Roof_Plate_fc.dxf for CNC.
 //
 // Coordinate system: matches JeNo 7 STEP file
 //   X+ = right, Y+ = forward, Z+ = up

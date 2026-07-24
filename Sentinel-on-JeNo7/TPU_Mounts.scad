@@ -1,82 +1,73 @@
 // TPU Mounts — LR900-P, RP3 V2, CV50 — JeNo 7" Sentinel RTK
 // ============================================================
-// Three separate TPU mounting brackets for the 915 MHz telemetry
-// radio, ELRS receiver, and rangefinder sensor.
+// Three separate TPU mounting brackets.
 //
-// Select one: LR900, RP3, or CV50
+// Select one: PART = "LR900", "RP3", or "CV50"
 //
-// All mount with M3 screws + nuts (or zip ties) to the JeNo
-// frame, arm, or top plate.
+// All build as a single solid block with cavities carved out
+// of the top — always manifold-safe.
+//
+// Examples:
+//   openscad -o LR900_Mount.stl -D 'PART="LR900"' TPU_Mounts.scad
+//   openscad -o RP3_Mount.stl   -D 'PART="RP3"'   TPU_Mounts.scad
+//   openscad -o CV50_Mount.stl  -D 'PART="CV50"'  TPU_Mounts.scad
 // ============================================================
 
-// ============================================================
-// MAKE SELECTION HERE — enable only ONE
-// ============================================================
-PART = "LR900";   // "LR900", "RP3", "CV50", "ALL"
+PART = "LR900"; // "LR900", "RP3", "CV50", "ALL"
 
 // ============================================================
-// COMMON
+// COMMON PARAMETERS
 // ============================================================
-tpu_t = 2.0;      // wall thickness
-gap   = 0.5;      // clearance gap around the device
-m3_d  = 3.2;      // M3 clearance
-stl_fn = 24;      // facet count
+wall = 2.0;     // wall thickness
+base = 1.8;     // thickness of material under the device
+m3_d = 3.2;     // M3 clearance
+m2_d = 2.2;     // M2 clearance
+zip = 3.0;      // zip-tie slot width
 
 // ============================================================
 // LR900-P — 915 MHz LoRa Telemetry Module
 // ============================================================
-// Dimensions (vendor): 43.4 × 25.8 × 11 mm
-// Mount: SMA whip on one end, UART header on one side
-// Place on arm or inside body, ≥200mm from RP3 antennas
+// Dimensions: 43.4 × 25.8 × 11 mm (body)
+// Mount: SMA whip on one end, UART header on side
+// Can be zip-tied to arm or screwed to plate
 
 module lr900_mount() {
-    lx = 43.4;  // length
-    ly = 25.8;  // width
-    lz = 11.0;  // height
+    dx = 43.4;  // device length (X)
+    dy = 25.8;  // device width (Y)
+    dz = 11.0;  // device height
 
-    // Base plate with the module sitting in a cradle
-    // Zip-tie slots at each end for the SMA end and loose wire end
+    ox = dx + 8;   // outer X
+    oy = dy + 8;   // outer Y
+    oz = dz + 2;   // total Z (base + cavity height)
+
+    // SMA end extends 4mm beyond the end — make room
+    sx = 4;  // extra on SMA end
 
     difference() {
-        // Base + wall cradle
-        union() {
-            // Base plate
-            linear_extrude(tpu_t)
-                offset(r = 3)
-                    square([lx + 8, ly + 8], center = true);
+        // — SOLID BLOCK —
+        linear_extrude(height = oz, convexity = 4)
+            offset(r = 3)
+                square([ox, oy], center = true);
 
-            // Side walls (cradle)
-            for (y = [-1, 1])
-                translate([0, y * (ly/2 + 1.5), 0])
-                    cube([lx + 6, tpu_t + 1, lz + 2], center = true);
+        // — DEVICE POCKET (carved from top, base remains) —
+        translate([0, 0, oz - dz - 0.1])
+            linear_extrude(height = dz + 0.2, convexity = 4)
+                square([dx + 0.5, dy + 0.5], center = true);
 
-            // End walls
-            for (x = [-1, 1])
-                translate([x * (lx/2 + 1.5), 0, 0])
-                    cube([tpu_t + 1, ly + 6, lz + 2], center = true);
+        // — CABLE RELIEF (UART side) —
+        translate([dx/2 + wall - 1, 0, base + 1])
+            cube([4, 6, dz - 2], center = true);
 
-            // Bottom pad (under the module)
-            cube([lx - 2, ly - 2, tpu_t], center = true);
-        }
-
-        // Module cavity
-        translate([0, 0, tpu_t])
-            cube([lx, ly, lz + 1], center = true);
-
-        // Zip-tie slots (lengthwise)
+        // — ZIP-TIE SLOTS (long axis) —
         for (x = [-1, 1])
-            translate([x * lx/3, 0, 0])
-                cube([3, ly + 10, tpu_t + 1], center = true);
+            translate([x * 10, 0, 0])
+                linear_extrude(height = oz + 1, convexity = 2)
+                    square([zip, oy + 2], center = true);
 
-        // Zip-tie slots (crosswise)
-        for (y = [-1, 1])
-            translate([0, y * ly/3, 0])
-                cube([lx + 10, 3, tpu_t + 1], center = true);
-
-        // M3 mount holes in the base
+        // — M3 MOUNT HOLES (through base) —
         for (x = [-1, 1], y = [-1, 1])
-            translate([x * (lx/2 + 3), y * (ly/2 + 3), 0])
-                cylinder(d = m3_d, h = tpu_t + 2, $fn = 12);
+            translate([x * (ox/2 - 3), y * (oy/2 - 3), -0.5])
+                cylinder(d = m3_d, h = base + 1, $fn = 12);
     }
 }
 
@@ -84,109 +75,109 @@ module lr900_mount() {
 // RP3 V2 — ELRS Receiver
 // ============================================================
 // Dimensions: 22 × 13 × 4 mm
-// Dual 65mm 2.4GHz antennas (IPEX/uFL)
-// Mount: 4 pads for soldered wires, or zip-tie
-// Needs antennas clear of carbon, not toward Q39
+// Dual 65 mm 2.4 GHz antennas via IPEX
 
 module rp3_mount() {
-    rx = 22;  // length
-    ry = 13;  // width
-    rz = 4;   // height
+    dx = 22;
+    dy = 13;
+    dz = 4;
+
+    ox = dx + 8;
+    oy = dy + 8;
+    oz = dz + 2;
 
     difference() {
-        union() {
-            // Thin base plate
-            linear_extrude(tpu_t)
-                offset(r = 3)
-                    square([rx + 6, ry + 6], center = true);
+        // — SOLID BLOCK —
+        linear_extrude(height = oz, convexity = 4)
+            offset(r = 3)
+                square([ox, oy], center = true);
 
-            // Side rails
-            for (y = [-1, 1])
-                translate([0, y * (ry/2 + 1), 0])
-                    cube([rx + 4, tpu_t, rz + 2], center = true);
+        // — DEVICE POCKET —
+        translate([1, 0, oz - dz - 0.1])
+            linear_extrude(height = dz + 0.2, convexity = 4)
+                square([dx, dy + 0.5], center = true);
 
-            // End rail (antenna side)
-            translate([rx/2 + 1, 0, 0])
-                cube([tpu_t, ry + 5, rz + 2], center = true);
-        }
+        // — ANTENNA CABLE NOTCH (rear) —
+        translate([-ox/2 - 1, 0, base + 2])
+            cube([4, 5, dz - 1], center = true);
 
-        // Module cavity (open at the back for wire routing)
-        translate([-1, 0, tpu_t])
-            cube([rx, ry, rz + 1], center = true);
+        // — ZIP-TIE SLOT —
+        translate([0, 0, -0.5])
+            linear_extrude(height = oz + 1, convexity = 2)
+                square([ox + 1, zip], center = true);
 
-        // Zip-tie slot
-        cube([rx + 8, 2.5, tpu_t + 1], center = true);
-
-        // Antenna exit notch
-        translate([rx/2 + 2, 0, tpu_t])
-            cube([4, 4, rz + 2], center = true);
-
-        // M3 mount holes
+        // — M3 MOUNT HOLES —
         for (x = [-1, 1], y = [-1, 1])
-            translate([x * (rx/2 + 2), y * (ry/2 + 2), 0])
-                cylinder(d = m3_d, h = tpu_t + 2, $fn = 12);
+            translate([x * (ox/2 - 3), y * (oy/2 - 3), -0.5])
+                cylinder(d = m3_d, h = base + 1, $fn = 12);
     }
 }
 
 // ============================================================
 // CV50 — 50m dToF Rangefinder
 // ============================================================
-// Mounts under the bottom plate (or arm area) with clear nadir view
-// 28.5 × 13.6 × 21.4 mm (enclosure)
-// Lens points down (-Z), UART ribbon goes to FC
-//
+// Dimensions: 28.5 × 13.6 × 21.4 mm
+// Lens points down (-Z), ribbon exits one end
+// Mounts under bottom plate, nadir view must be clear
 
 module cv50_mount() {
-    cx = 28.5;  // length
-    cy = 13.6;  // width (narrow direction)
-    cz = 21.4;  // height (lens-down direction)
+    dx = 28.5;
+    dy = 13.6;
+    dz = 21.4;
+
+    // Mounting margin
+    mx = dx + 10;
+    my = dy + 10;
+
+    // Total height: base + device depth
+    oz = base + dz + 1;
 
     difference() {
-        union() {
-            // Top plate (mounts to frame)
-            linear_extrude(tpu_t)
-                offset(r = 3)
-                    square([cx + 10, cy + 10], center = true);
+        // — SOLID BLOCK (mounts to frame top, device hangs down) —
+        linear_extrude(height = oz, convexity = 4)
+            offset(r = 3)
+                square([mx, my], center = true);
 
-            // Corner standoffs (bottom bezel)
-            for (x = [-1, 1], y = [-1, 1])
-                translate([x * cx/3, y * cy/3, -cz/2])
-                    cylinder(d = 4, h = cz/2 + tpu_t, $fn = 8);
-        }
+        // — DEVICE POCKET (carved from bottom up) —
+        // The device sits inside the block, lens near the bottom
+        translate([0, 0, -0.1])
+            linear_extrude(height = oz - base + 0.1, convexity = 4)
+                square([dx + 1, dy + 1], center = true);
 
-        // Sensor cavity (lens-down)
-        translate([0, 0, -cz/2])
-            cube([cx + 1, cy + 1, cz + 1], center = true);
+        // — LENS WINDOW (clear viewing aperture, bottom face) —
+        translate([0, 0, -0.5])
+            linear_extrude(height = base + 1, convexity = 2)
+                circle(d = 12, $fn = 24);
 
-        // Lens view port (clear aperture)
-        translate([0, 0, -cz - 0.5])
-            cylinder(d = 10, h = cz + 2, $fn = 24);
+        // — RIBBON EXIT SLOT (one narrow end) —
+        translate([mx/2 - 2, 0, base + 2])
+            cube([4, 8, dz - 3], center = true);
 
-        // Ribbon cable exit slot
-        translate([cx/2 + 1, 0, -cz/4])
-            cube([6, 8, cz/2], center = true);
-
-        // M3 mount holes (top plate → frame bottom)
+        // — M3 MOUNT HOLES (top plate, through base) —
         for (x = [-1, 1], y = [-1, 1])
-            translate([x * (cx/2 + 3), y * (cy/2 + 3), 0])
-                cylinder(d = m3_d, h = tpu_t + 2, $fn = 12);
+            translate([x * (mx/2 - 3), y * (my/2 - 3), -0.5])
+                cylinder(d = m3_d, h = base + 1, $fn = 12);
+
+        // — WEIGHT REDUCTION (sides of the tall block) —
+        for (x = [-1, 1])
+            translate([x * (mx/2 - 3), 0, oz/2])
+                cube([4, my - 6, oz - base - 3], center = true);
     }
 }
 
 // ============================================================
 // RENDER
 // ============================================================
-$fn = stl_fn;
+$fn = 16;
 
 if (PART == "LR900") {
-    translate([0, 0, 0]) lr900_mount();
+    lr900_mount();
 } else if (PART == "RP3") {
-    translate([0, 0, 0]) rp3_mount();
+    rp3_mount();
 } else if (PART == "CV50") {
-    translate([0, 0, 0]) cv50_mount();
+    cv50_mount();
 } else if (PART == "ALL") {
-    $fn = 16;
-    translate([-30, 0, 0]) lr900_mount();
-    translate([30, 0, 0]) rp3_mount();
-    translate([0, -30, 0]) cv50_mount();
+    translate([-35, 0, 0]) lr900_mount();
+    translate([ 35, 0, 0]) rp3_mount();
+    translate([  0, -35, 0]) cv50_mount();
 }

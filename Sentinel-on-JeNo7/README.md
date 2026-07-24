@@ -10,6 +10,8 @@ Goal: fly the **F450 Sentinel** avionics and RTK mission on a **JeNo 7"** frame.
 |------|------|------|
 | `GNSS_Roof_Plate.scad` | OpenSCAD source | GNSS roof plate (parametrized) |
 | `GNSS_Roof_Plate_fc.dxf` | DXF | **Use this for CNC cutting** — 14 circle holes + polyline outline |
+
+**Note on OpenSCAD exports:** This system has OpenSCAD 2021.01 which has a buggy binary STL writer. Always use `--export-format asciistl` when exporting STL from the .scad files. The FreeCAD-generated files (`_fc.*`) are the production reference.
 | `GNSS_Roof_Plate_fc.step` | STEP | 3D solid for Fusion/FreeCAD |
 | `GNSS_Roof_Plate_fc.stl` | STL | 3D print for test fit |
 | `TPU_Mounts.scad` | OpenSCAD source | Parametric LR900/RP3/CV50 mounts |
